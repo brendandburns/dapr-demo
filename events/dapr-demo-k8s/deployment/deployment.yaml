@@ -1,0 +1,70 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: kube-events
+  name: events-reader
+rules:
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["get", "watch", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-events
+  namespace: kube-events
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: kube-events
+roleRef:
+  kind: Role
+  name: events-reader
+  apiGroup: ""
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: events-javaapp
+  namespace: kube-events
+  labels:
+    app: java
+spec:
+  selector:
+    app: java
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: events-javaapp
+  namespace: kube-events
+  labels:
+    app: java
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java
+  template:
+    metadata:
+      labels:
+        app: java
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "events-javaapp"
+        dapr.io/app-port: "3000"
+    spec:
+      containers:
+      - name: java
+        image: brendanburns/dapr-demo-java:v2
+        ports:
+        - containerPort: 3000
+        imagePullPolicy: Always

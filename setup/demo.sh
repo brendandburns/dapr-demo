@@ -1,11 +1,18 @@
 #!/bin/bash
 
-dapr init -k
-kubectl create namespace dapr-demo
+. ../util.sh
 
-cat deployment.yaml
-kubectl create -f deployment.yaml
+run 'clear'
 
-kubectl get pods --namespace dapr-demo -w
+desc "Install dapr on your Kubernetes cluster"
+run 'dapr init -k'
+run 'watch kubectl get pods --namespace=dapr-system'
+
+desc "Install a sample app"
+kubectl create namespace dapr-demo 2>&1 > /dev/null
+
+run 'less deployment.yaml'
+run 'kubectl create -f deployment.yaml'
+run 'watch kubectl get pods --namespace dapr-demo'
 
 
