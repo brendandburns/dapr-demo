@@ -52,7 +52,11 @@ function run() {
       sleep 0.5
     fi
     OFILE="$(mktemp -t $(basename $0).XXXXXX)"
-    script -eq -c "$1" -f "$OFILE"
+    # TODO: make this switch on os
+    # linux
+    script -eq -c "$1" -f "$OFILE"; then
+    # OS X
+    # script -q -F "$OFILE" $1
     r=$?
     read -d '' -t "${timeout}" -n 10000 # clear stdin
     prompt

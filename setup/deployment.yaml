@@ -20,6 +20,6 @@ spec:
     spec:
       containers:
       - name: demo-app 
-        image: nginx:1.14.2
+        image: brendanburns/dapr-demo-java:v2
         ports:
         - containerPort: 80

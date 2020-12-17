@@ -13,4 +13,4 @@ run 'kubectl create -f dapr-demo-k8s/deployment/deployment.yaml'
 run 'watch kubectl --namespace kube-events get pods'
 
 POD=$(kubectl --namespace kube-events get pods --no-headers | awk '{print $1}')
-run "kubectl --namespace kube-events logs ${POD} java"
+run "kubectl --namespace kube-events logs ${POD} daprd"
